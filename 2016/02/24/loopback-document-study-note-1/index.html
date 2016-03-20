@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>loopback document 学习笔记（一） | Lukeqqi 的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="loopback 是 IBM 的 StrongLoop 团队的一款用于快速搭建 web API 的框架，简单易用，这里记录一下学习过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="loopback document 学习笔记（一）">
+<meta property="og:url" content="http://dongdonggaui.github.io/2016/02/24/loopback-document-study-note-1/index.html">
+<meta property="og:site_name" content="Lukeqqi 的博客">
+<meta property="og:description" content="loopback 是 IBM 的 StrongLoop 团队的一款用于快速搭建 web API 的框架，简单易用，这里记录一下学习过程。">
+<meta property="og:updated_time" content="2016-03-20T08:08:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="loopback document 学习笔记（一）">
+<meta name="twitter:description" content="loopback 是 IBM 的 StrongLoop 团队的一款用于快速搭建 web API 的框架，简单易用，这里记录一下学习过程。">
+  
+    <link rel="alternative" href="/atom.xml" title="Lukeqqi 的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="null" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Lukeqqi</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">记录学习的点点滴滴</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="#" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/brew-cask/" style="font-size: 10px;">brew cask</a> <a href="/tags/gem/" style="font-size: 10px;">gem</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/loopback/" style="font-size: 10px;">loopback</a> <a href="/tags/ruby/" style="font-size: 10px;">ruby</a> <a href="/tags/动画/" style="font-size: 10px;">动画</a> <a href="/tags/异常/" style="font-size: 10px;">异常</a> <a href="/tags/总结/" style="font-size: 20px;">总结</a> <a href="/tags/笔记/" style="font-size: 10px;">笔记</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">奥巴马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">卡卡的美丽传说</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">本泽马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">吉格斯的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">习大大大不同</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">托蒂的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是谁，我从哪里来，我到哪里去？我就是我，是颜色不一样的吃货…</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Lukeqqi</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="null" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Lukeqqi</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">记录学习的点点滴滴</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-loopback-document-study-note-1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/02/24/loopback-document-study-note-1/" class="article-date">
+  	<time datetime="2016-02-24T08:04:18.000Z" itemprop="datePublished">2016-02-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      loopback document 学习笔记（一）
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/loopback/">loopback</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/笔记/">笔记</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>loopback 是 IBM 的 StrongLoop 团队的一款用于快速搭建 web API 的框架，简单易用，这里记录一下学习过程。<br><a id="more"></a></p>
+<ol>
+<li><p><code>Model</code>的有效性验证</p>
+<ul>
+<li>通过在<code>model-name.js</code>文件中设置验证逻辑，验证方法主要有：<ul>
+<li><code>validatesAbsenceOf</code>：验证model不能包含的属性</li>
+<li><code>validatesExclusionOf</code>：验证属性的非法取值范围</li>
+<li><code>validatesFormatOf</code>：验证属性必须符合的格式，参数为属性名和格式验证，格式验证为包含正则表达式和message的object</li>
+<li><code>validatesInclusionOf</code>：验证属性的有效取值范围</li>
+<li><code>validatesLengthOf</code>：验证属性的长度，有<code>min</code>、<code>max</code>和<code>is</code>三种验证方式</li>
+<li><code>validatesNumericalityOf</code>：验证属性是整型还是浮点型（Integer or Number）</li>
+<li><code>validatesPresenceOf</code>：验证model必须要有的属性</li>
+<li><code>validatesUniquenessOf</code>：验证属性的唯一性<ul>
+<li>通过调用<code>model</code>的<code>isValid()</code>方法来强制验证，通过调用<code>validate()</code>和<code>validateAsync()</code>方法来进行自定义的验证逻辑</li>
+<li>当<code>model</code>创建和更新时，会自动进行验证</li>
+<li>本地化验证消息，提供<code>error.details.codes</code>让客户端进行本地化适配</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Operation hooks</p>
+<ul>
+<li>由执行<code>CRUD</code>操作的方法触发</li>
+<li>使用<code>operation hooks</code>，<code>model hooks</code>已经废弃</li>
+<li><code>Operation hook context object</code>是<code>operation hooks</code>特有的，和<code>remote hooks context</code>和<code>loopback.getCurrentContext()</code>不是同一个</li>
+<li>所有<code>hook</code>和<code>operation</code>的<code>operation hook context</code>共有属性：<ul>
+<li><code>Model</code>：context.Model</li>
+<li><code>options</code>：自定义操作选项，可用来传递自定义参数</li>
+<li><code>hookState：hook</code> operation之间用来共享的数据<ul>
+<li>hook和operation特有的属性：</li>
+</ul>
+</li>
+<li><code>instance</code>：当且仅当<code>operation</code>只对一个<code>instance</code>的全部属性进行了<code>update/create/delete</code>操作时才有此属性</li>
+<li><code>where+data</code>：当<code>operation</code>对多个<code>instance</code>进行了操作或对一个<code>instance</code>的部分<code>property</code>进行了操作时，<code>context</code>会提供一个<code>where filter</code>和一个包含了受到了影响的属性的<code>data</code>对象</li>
+<li><code>isNewInstance</code>：用来标识<code>CREATE</code>和<code>UPDATE</code>操作的flg</li>
+<li><code>currentInstance</code>：<code>context</code>为使单个<code>instance</code>的部分属性受到影响的操作提供的属性，包含一个受到影响的<code>model instance</code>，框架推荐将此属性作为<code>read only</code>对待</li>
+</ul>
+</li>
+<li>Loopback提供的Operation hooks主要有：<ul>
+<li><code>access</code>：当查询Model的方法调用时触发，用来修改查询，如添加额外的查询条件，context包含属性有<code>Model</code>和<code>query</code></li>
+<li><code>before save</code>：在Model instance被创建或更新前触发<ul>
+<li>PersistedModel触发before save的方法有：<code>create()</code>、<code>upsert()</code>、<code>findOrCreate()</code>、<code>updateAll()</code>、<code>prototype.save()</code>、<code>prototype.updateAttributes()</code></li>
+<li><code>brefore save</code>在<code>validators</code>之前被触发</li>
+<li>针对单个Model所有属性的save操作，context提供的属性有：<code>Model</code>、<code>instance</code></li>
+<li>多个Model部分属性的更新操作，context提供的属性有：<code>Model</code>、<code>where</code>、<code>data</code>、<code>currentInstance</code></li>
+<li>当context有instance属性的时候，before save hook提供了<code>context.isNewInstance</code>，当操作为<code>create()</code>时它的值为<code>true</code>，为<code>update()</code>则为<code>false</code>，如果是<code>updateOrCreate()</code>、<code>prototype.save()</code>、<code>prototypeUpdateAttributes()</code>和<code>updateAll()</code>时为<code>undefined</code></li>
+<li>删除不需要的属性，针对有instance的属性的context，调用<code>unsetAttribute(name)</code>，而对提供<code>where、data</code>属性对的context，直接使用<code>delete</code>操作符即可，这样可以完全避免将伪造的或不需要的数据写入数据库</li>
+</ul>
+</li>
+<li><code>after save</code>：基本同<code>before save</code>，不同的地方主要有：<ul>
+<li>针对单个Model所有属性的save操作，context提供的instance在after save进行修改之后只对REST接口调用的结果有影响，但是不会写入数据库</li>
+<li>针对多个Model的更新操作中，context提供的<code>where</code>有可能会失效，如<code>MyModel.updateAll({ color: &#39;yellow&#39; }, { color: &#39;red&#39; }, cb);</code>，当after save被触发时，<code>where</code>也就是<code>{ color: &#39;yello&#39;}</code>已经匹配不到数据了</li>
+<li>只有部分<code>connector</code>支持<code>context.isNewInstance</code></li>
+</ul>
+</li>
+<li><code>before delete</code>：</li>
+<li><code>after delete</code>：</li>
+<li><code>loaded</code>：在<code>connector</code>获取数据之后，通过这些数据创建Model之前被触发，可用于解密数据，context只提供<code>data</code>属性</li>
+<li><code>persist</code>：</li>
+<li><code>afterInitialize</code>：</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Environment-Specific Configuration<ul>
+<li>只能针对server目录下的config进行指定环境</li>
+<li>环境变量由<code>NODE_ENV</code>指定和获取，通过<code>app.process.ENV.NODE_ENV</code>访问</li>
+<li>指定环境变量配置主要有<code>Application wide</code>、<code>local</code>、<code>{ENV}</code>三种，如<code>config.json</code>、<code>config.local.json</code>、<code>config.{ENV}.json</code>，{ENV}通常为<code>development</code>、<code>production</code>、<code>staging</code></li>
+<li>通过<code>local</code>或<code>{ENV}</code>重写<code>Application wide</code>配置只能重写<code>string</code>和<code>numbers</code>，内嵌object和数组类型暂时不支持</li>
+<li>加载优先级为：<code>{ENV}</code>&gt;<code>local</code>&gt;<code>Application wide</code></li>
+</ul>
+</li>
+<li>为内建的Model创建数据库表<ul>
+<li>在<code>server/model-config.json</code>文件中修改对应<code>Model</code>的<code>dataSource</code>属性，如<code>mongoDs</code></li>
+<li>需要创建js脚本，然后在命令行执行</li>
+<li>获取dataSrouce：<code>var ds = server.dataSources.mongoDs;</code></li>
+<li>指定需要创建数据库表的Model：<code>var lbTables = [&#39;User&#39;, &#39;AccessToken&#39;, &#39;ACL&#39;, &#39;RoleMapping&#39;, &#39;Role&#39;];</code></li>
+<li>迁移：<code>ds.automigrate(laTables, function(err) {...});</code></li>
+<li>在<code>automigrate</code>回调中断开数据库连接：<code>ds.disconnect();</code></li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/02/24/brew-cask-failed-to-build-gem-native-extension/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          Homebrew cask 触发 Failed to build gem native extension 错误解决
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/02/24/start-up/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">终于开通个人技术博客了</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="loopback-document-study-note-1" data-title="loopback document 学习笔记（一）" data-url="http://dongdonggaui.github.io/2016/02/24/loopback-document-study-note-1/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Lukeqqi
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

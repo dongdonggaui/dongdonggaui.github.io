@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>iOS 中 viewController 的自定义 transition 动画效果总结 | Lukeqqi 的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="从 iOS7 开始，Apple 提供了一组 API 来帮助我们实现自定义的转场动画。如系统自带的“照片” App 中照片列表到照片详情的转场切换动画、“微信”中聊天界面里点击图片的转场切换动画效果、“支付宝”中付款时底部弹出的确认效果等等，都可以用这一组 API 来实现。这里总结一下完成一个自定义转场动画的主要步骤。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 中 viewController 的自定义 transition 动画效果总结">
+<meta property="og:url" content="http://dongdonggaui.github.io/2016/02/26/iOS-view-controller-transition-summerize/index.html">
+<meta property="og:site_name" content="Lukeqqi 的博客">
+<meta property="og:description" content="从 iOS7 开始，Apple 提供了一组 API 来帮助我们实现自定义的转场动画。如系统自带的“照片” App 中照片列表到照片详情的转场切换动画、“微信”中聊天界面里点击图片的转场切换动画效果、“支付宝”中付款时底部弹出的确认效果等等，都可以用这一组 API 来实现。这里总结一下完成一个自定义转场动画的主要步骤。">
+<meta property="og:updated_time" content="2016-03-20T08:08:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS 中 viewController 的自定义 transition 动画效果总结">
+<meta name="twitter:description" content="从 iOS7 开始，Apple 提供了一组 API 来帮助我们实现自定义的转场动画。如系统自带的“照片” App 中照片列表到照片详情的转场切换动画、“微信”中聊天界面里点击图片的转场切换动画效果、“支付宝”中付款时底部弹出的确认效果等等，都可以用这一组 API 来实现。这里总结一下完成一个自定义转场动画的主要步骤。">
+  
+    <link rel="alternative" href="/atom.xml" title="Lukeqqi 的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="null" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Lukeqqi</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">记录学习的点点滴滴</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="#" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/brew-cask/" style="font-size: 10px;">brew cask</a> <a href="/tags/gem/" style="font-size: 10px;">gem</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/loopback/" style="font-size: 10px;">loopback</a> <a href="/tags/ruby/" style="font-size: 10px;">ruby</a> <a href="/tags/动画/" style="font-size: 10px;">动画</a> <a href="/tags/异常/" style="font-size: 10px;">异常</a> <a href="/tags/总结/" style="font-size: 20px;">总结</a> <a href="/tags/笔记/" style="font-size: 10px;">笔记</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">奥巴马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">卡卡的美丽传说</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">本泽马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">吉格斯的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">习大大大不同</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">托蒂的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是谁，我从哪里来，我到哪里去？我就是我，是颜色不一样的吃货…</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Lukeqqi</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="null" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Lukeqqi</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">记录学习的点点滴滴</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-iOS-view-controller-transition-summerize" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/02/26/iOS-view-controller-transition-summerize/" class="article-date">
+  	<time datetime="2016-02-26T09:27:31.000Z" itemprop="datePublished">2016-02-26</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS 中 viewController 的自定义 transition 动画效果总结
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/动画/">动画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/总结/">总结</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>从 iOS7 开始，Apple 提供了一组 API 来帮助我们实现自定义的转场动画。如系统自带的“照片” App 中照片列表到照片详情的转场切换动画、“微信”中聊天界面里点击图片的转场切换动画效果、“支付宝”中付款时底部弹出的确认效果等等，都可以用这一组 API 来实现。这里总结一下完成一个自定义转场动画的主要步骤。</p>
+<a id="more"></a>
+<h2 id="主要-API"><a href="#主要-API" class="headerlink" title="主要 API"></a>主要 API</h2><p>这些 API 主要包括三个协议：</p>
+<ul>
+<li><em>UIViewControllerAnimatedTransitioning</em>：用来自定义转场动画；</li>
+<li><em>UINavigationControllerDelegate</em>：用来告诉 viewController 转场需要的动画对象，并对转场过程做必要的控制，viewController 的转场通过 push 方式组织；</li>
+<li><em>UIViewControllerTransitioningDelegate</em>：同上，只是 viewController 转场的组织方式是通过 present 的方式。</li>
+</ul>
+<h2 id="需要做的工作"><a href="#需要做的工作" class="headerlink" title="需要做的工作"></a>需要做的工作</h2><p>自定义转场动画效果主要分为两个步骤</p>
+<ul>
+<li>创建自定义动画</li>
+<li>指定 viewController 转场需要的动画</li>
+</ul>
+<h3 id="创建自定义动画"><a href="#创建自定义动画" class="headerlink" title="创建自定义动画"></a>创建自定义动画</h3><p>通过创建自定义动画类，实现 <em>UIViewControllerAnimatedTransitioning</em> 协议来定义和管理转场动画。实现<code>transitionDuration:</code>和<code>animateTransition:</code>方法，在<code>animateTransition:</code>方法中通过<code>transitionContext</code>参数获取动画所需要的上下文信息，如<code>containView</code>、<code>fromVC</code>、<code>toVC</code>等，然后进行自定义动画的实现。</p>
+<h3 id="指定-viewController-转场需要的动画"><a href="#指定-viewController-转场需要的动画" class="headerlink" title="指定 viewController 转场需要的动画"></a>指定 viewController 转场需要的动画</h3><p>在这一步，按 viewController 转场的组织方式分为两种类型：push 和 present。</p>
+<h4 id="基于-push-的转场动画"><a href="#基于-push-的转场动画" class="headerlink" title="基于 push 的转场动画"></a>基于 push 的转场动画</h4><p>此种转场需要实现 <em>UINavigationControllerDelegate</em> 协议的相关方法来指定和管理前面定义好的动画对象，大致步骤为：</p>
+<ul>
+<li>实现 <code>navigationController:interactionControllerForAnimationController:</code> 指定可交互的 transition 动画控制器，若不需要可交互返回<code>nil</code>即可；</li>
+<li>实现 <code>navigationController:didShowViewController:animated:</code> 做一些必要的额外工作，如更新 statusBar 样式等；</li>
+<li>若支持交互，建议在此类中实现<code>UIScreenEdgePanGestureRecognizer</code>手势回调<ul>
+<li>在识别手势 <code>.Began</code> 之后将 <code>transition</code> 标识为 <code>interacting</code></li>
+<li>为 <code>transition</code> 创建 <code>UIPercentDrivenInteractiveTransition</code> 对象，并 <code>startInteractiveTransition</code></li>
+<li>在 <code>.Change</code> 中 <code>updateInteractiveTransition</code></li>
+<li>手势结束时（ <code>.Ended</code> 和 <code>.Cancel</code> ）中根据 <code>percent</code> 判断是 <code>finishInteractiveTransition</code> 还是 <code>cancelInteractiveTransition</code></li>
+<li>一些收尾工作，如回收<code>UIPercentDrivenInteractiveTransition</code>对象</li>
+</ul>
+</li>
+<li>将 <code>UINavigationController</code> 的 <code>delegate</code> 设置为此类的实例</li>
+</ul>
+<h4 id="基于-present-的转场动画"><a href="#基于-present-的转场动画" class="headerlink" title="基于 present 的转场动画"></a>基于 present 的转场动画</h4><p>此种转场需要实现 <em>UIViewControllerTransitioningDelegate</em> 协议相关的方法来指定和管理前面定义好的动画对象，大致步骤为：</p>
+<ul>
+<li>实现 <code>animationControllerForPresentedController:presentingController:sourceController:</code> 指定 present 动画对象</li>
+<li>实现 <code>animationControllerForDismissedController:</code> 指定 dismiss 动画对象</li>
+<li>实现 <code>interactionControllerForDismissal:</code> 指定可交互的 dismiss 动画对象</li>
+<li>实现 <code>interactionControllerForPresentation:</code> 指定可交互的  present  动画对象</li>
+<li>将想要 present / dismiss 的 viewController 的 <code>transitioningDelegate</code> 设置为此类的实例</li>
+</ul>
+<h4 id="iOS8-更新"><a href="#iOS8-更新" class="headerlink" title="iOS8 更新"></a>iOS8 更新</h4><p>从 iOS8 开始，Apple 提供了 <em>UIPresentationController</em> 来辅助实现自定义的 view transition，所有 <code>UIViewControllerAnimatedTransitioning</code> 和 <code>UINavigationControllerDelegate</code> 或 <code>UIViewControllerTransitioningDelegate</code> 的相关方法可以在 <em>UIPresentationController</em> 的子类中组织，这样让我们的自定义转场效果相关的代码更好组织与管理。可以参考 Apple 的官方例程：<a href="https://developer.apple.com/library/ios/samplecode/CustomTransitions/Introduction/Intro.html#//apple_ref/doc/uid/TP40015158" target="_blank" rel="external">Custom View Controller Presentations and Transitions</a>。</p>
+<h4 id="第三方框架"><a href="#第三方框架" class="headerlink" title="第三方框架"></a>第三方框架</h4><p>开源社区有大神将市场上常见的 App 转场效果实现封装并开源了——<a href="https://github.com/DianQK/TransitionTreasury" target="_blank" rel="external">TransitionTreasury</a>。通过这个框架，我们只需要几行代码就可以实现各式各样的转场效果。如果需要基于 push 的转场动画，我们只需要写以下代码：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> vc = <span class="type">SecondViewController</span>()</span><br><span class="line">    navigationController?.tr_pushViewController(vc, method: <span class="type">TRPushTransitionMethod</span>.<span class="type">Fade</span>, completion: &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"Push finish"</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果需要基于 present 的转场动画，我们只需要：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">present</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> vc = <span class="type">ModalViewController</span>()</span><br><span class="line">    vc.modalDelegate = <span class="keyword">self</span> <span class="comment">// Don't forget to set modalDelegate</span></span><br><span class="line">    tr_presentViewController(vc, method: <span class="type">TRPresentTransitionMethod</span>.<span class="type">Fade</span>, completion: &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"Present finished."</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>自定义 viewController 的转场动画主要分两步走，第一步，通过实现 <em>UIViewControllerAnimatedTransitioning</em> 协议来自定义装自己想要的动画效果；第二步，根据转场动画的组织方式实现 <em>UINavigationControllerDelegate</em> 或 <em>UIViewControllerTransitioningDelegate</em> 来管理动画。从 iOS8 开始，我们可以使用 <em>UIPresentationController</em> 来管理和组织自定义转场相关的代码。通过使用合适的第三方框架可以大大地简化我们的开发工作。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/20/clean-my-mac/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          Mac 硬盘空间清理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/02/24/brew-cask-failed-to-build-gem-native-extension/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Homebrew cask 触发 Failed to build gem native extension 错误解决</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="iOS-view-controller-transition-summerize" data-title="iOS 中 viewController 的自定义 transition 动画效果总结" data-url="http://dongdonggaui.github.io/2016/02/26/iOS-view-controller-transition-summerize/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Lukeqqi
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
