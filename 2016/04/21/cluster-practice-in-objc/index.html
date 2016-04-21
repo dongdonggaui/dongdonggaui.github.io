@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>Objective-C 中的一次类簇模式的简单应用实践 | Lukeqqi 的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="类簇是 Foundation 框架中广泛使用的设计模式。类簇将一些私有的、具体的子类组合在一个公共的、抽象的超类下面，以这种方法来组织类可以简化一个面向对象框架的公开架构，而又不减少功能的丰富性。
+
+以上摘自百度百科。类簇模式在 iOS 中应用十分广泛，NSArry、NSDictionary、NSNumber、NSString、UIButton 等都是用类簇模式实现的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Objective-C 中的一次类簇模式的简单应用实践">
+<meta property="og:url" content="http://dongdonggaui.github.io/2016/04/21/cluster-practice-in-objc/index.html">
+<meta property="og:site_name" content="Lukeqqi 的博客">
+<meta property="og:description" content="类簇是 Foundation 框架中广泛使用的设计模式。类簇将一些私有的、具体的子类组合在一个公共的、抽象的超类下面，以这种方法来组织类可以简化一个面向对象框架的公开架构，而又不减少功能的丰富性。
+
+以上摘自百度百科。类簇模式在 iOS 中应用十分广泛，NSArry、NSDictionary、NSNumber、NSString、UIButton 等都是用类簇模式实现的。">
+<meta property="og:updated_time" content="2016-04-21T11:47:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Objective-C 中的一次类簇模式的简单应用实践">
+<meta name="twitter:description" content="类簇是 Foundation 框架中广泛使用的设计模式。类簇将一些私有的、具体的子类组合在一个公共的、抽象的超类下面，以这种方法来组织类可以简化一个面向对象框架的公开架构，而又不减少功能的丰富性。
+
+以上摘自百度百科。类簇模式在 iOS 中应用十分广泛，NSArry、NSDictionary、NSNumber、NSString、UIButton 等都是用类簇模式实现的。">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/assets/blogImg/avatar.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Lukeqqi</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">记录学习的点点滴滴</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/dongdonggaui" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/dongdongguai007" title="weibo">weibo</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/Objective-C/" style="font-size: 13.33px;">Objective-C</a> <a href="/tags/UITableView/" style="font-size: 10px;">UITableView</a> <a href="/tags/brew-cask/" style="font-size: 10px;">brew cask</a> <a href="/tags/code-review/" style="font-size: 10px;">code review</a> <a href="/tags/gem/" style="font-size: 10px;">gem</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/instruments/" style="font-size: 10px;">instruments</a> <a href="/tags/loopback/" style="font-size: 10px;">loopback</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/ruby/" style="font-size: 10px;">ruby</a> <a href="/tags/动画/" style="font-size: 10px;">动画</a> <a href="/tags/实践/" style="font-size: 10px;">实践</a> <a href="/tags/异常/" style="font-size: 10px;">异常</a> <a href="/tags/总结/" style="font-size: 13.33px;">总结</a> <a href="/tags/笔记/" style="font-size: 16.67px;">笔记</a> <a href="/tags/类簇/" style="font-size: 10px;">类簇</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/重构/" style="font-size: 10px;">重构</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+				
+				<section class="switch-part switch-part3">
+				
+					<div id="js-aboutme">武汉大学软件工程 12 级硕士研究生，就职于完美世界（北京），从事 iOS 开发。热爱钻研移动互联网技术。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Lukeqqi</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/assets/blogImg/avatar.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Lukeqqi</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">记录学习的点点滴滴</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/dongdonggaui" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/dongdongguai007" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-cluster-practice-in-objc" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/21/cluster-practice-in-objc/" class="article-date">
+  	<time datetime="2016-04-21T10:06:46.000Z" itemprop="datePublished">2016-04-21</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Objective-C 中的一次类簇模式的简单应用实践
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Objective-C/">Objective-C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/实践/">实践</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/类簇/">类簇</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/设计模式/">设计模式</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>类簇是 Foundation 框架中广泛使用的设计模式。类簇将一些私有的、具体的子类组合在一个公共的、抽象的超类下面，以这种方法来组织类可以简化一个面向对象框架的公开架构，而又不减少功能的丰富性。</p>
+</blockquote>
+<p>以上摘自<a href="http://baike.baidu.com/link?url=AO73s0c84lgs1hyd7AKscF3fKEklQRy5itjFyLvK8K6_86l8EW56pbpF3nyB19W1OywBU6J5xeLfBNRngyIYw_" target="_blank" rel="external">百度百科</a>。类簇模式在 iOS 中应用十分广泛，NSArry、NSDictionary、NSNumber、NSString、UIButton 等都是用类簇模式实现的。</p>
+<a id="more"></a>
+<p><code>UIButton</code> 提供了一个 <code>UIButtonType</code> 的枚举用来传给类方法 <code>+buttonWithType:</code> 获取 SDK 内置的几种样式的 <code>UIButton</code> 对象。更多关于 <code>UIButton</code> 的说明可以参考苹果<a href="https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIButton_Class/index.html" target="_blank" rel="external">官方文档</a>。</p>
+<h2 id="日常"><a href="#日常" class="headerlink" title="日常"></a>日常</h2><p>最近在日常开发中遇到了一个轮播图的需求，通过访问服务器获取图片、标题、跳转辅助信息等字段，向用户呈现自动滚动的轮播图。轮播图的图片、标题以及跳转都需要在服务器后台由运营人员设定。对于轮播图中不同类型的 item，用户点击跳转也不相同。前段时间为了赶进度，没有经过仔细思考，采用了最无脑的方式实现：</p>
+<ul>
+<li>用一个枚举标识轮播图 item 的 type</li>
+<li>在用户点击回调中通过判断 type 的值来分别处理跳转</li>
+</ul>
+<p>实现代码长这样（已去敏感化）：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// XXGalleryItem.h</span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSUInteger</span>, XXGalleryItemType) &#123;</span><br><span class="line">    XXGalleryItemType1 = <span class="number">1</span>,</span><br><span class="line">    XXGalleryItemType2,</span><br><span class="line">    XXGalleryItemType3,</span><br><span class="line">    XXGalleryItemType4,</span><br><span class="line">    XXGalleryItemType5</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXGalleryItem</span> : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) XXGalleryItemType type;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// XXGalleryItem.m</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXGalleryItem</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>处理跳转的地方是这样的：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">XXGalleryItem *item = ...;</span><br><span class="line"><span class="keyword">if</span> (![item isKindOfClass:[XXGalleryItem class]]) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">NSInteger</span> type = item.type;</span><br><span class="line"><span class="built_in">UIViewController</span> *vc = <span class="literal">nil</span>;</span><br><span class="line"><span class="keyword">switch</span> (type) &#123;</span><br><span class="line">    <span class="keyword">case</span> XXGalleryItemType1: &#123;</span><br><span class="line">        vc = ...;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> XXGalleryItemType2: &#123;</span><br><span class="line">        vc = ...;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> XXGalleryItemType3: &#123;</span><br><span class="line">        vc = ...;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> XXGalleryItemType4: &#123;</span><br><span class="line">        vc = ...;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> XXGalleryItemType5: &#123;</span><br><span class="line">        vc = ...;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">[<span class="keyword">self</span>.navigationController pushViewController:vc animated:<span class="literal">YES</span>]</span><br></pre></td></tr></table></figure>
+<p>这样造成了大片的 <code>switch-case</code>，而在项目中又有多处这样的轮播图，可以想象，每多一处就会有同样规模的 <code>switch-case</code>，如果日后不同类型 item 对应的跳转逻辑需要统一修改，工作量会有多大，想想就很蛋疼。</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>仔细想一想发现，这里的 item 的行为和 <code>UIButton</code> 很相似，都有作为类型标识的 type，都可以抽象出一些所有类型对象的相同的行为。这里轮播图的所有类型的 item 都需要处理用户的点击跳转回调。如果有一种方式可以让处理轮播图回调的地方只需要发送处理指令而不关注处理的细节，那真是极好的。</p>
+<p>这里模仿 <code>UIButton</code> 的实现，应用类簇模式，可以对前面的代码进行如下改造：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// XXGalleryItem.h</span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSUInteger</span>, XXGalleryItemType) &#123;</span><br><span class="line">    XXGalleryItemType1 = <span class="number">1</span>,</span><br><span class="line">    XXGalleryItemType2,</span><br><span class="line">    XXGalleryItemType3,</span><br><span class="line">    XXGalleryItemType4,</span><br><span class="line">    XXGalleryItemType5</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXGalleryItem</span> : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) XXGalleryItemType type;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)pushWithNavigationController:(<span class="built_in">UINavigationController</span> * _Nonnull)navigationController;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// XXGalleryItem.m</span></span><br><span class="line"><span class="meta">#import <span class="meta-string">"XXGalleryItem.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXGalleryType1Item</span> : <span class="title">XXGalleryItem</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXGalleryType2Item</span> : <span class="title">XXGalleryItem</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXGalleryType3Item</span> : <span class="title">XXGalleryItem</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXGalleryType4Item</span> : <span class="title">XXGalleryItem</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXGalleryType5Item</span> : <span class="title">XXGalleryItem</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXGalleryItem</span></span></span><br><span class="line"></span><br><span class="line">+ (nullable Class)modelCustomClassForDictionary:(<span class="built_in">NSDictionary</span>*)dictionary</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSNumber</span> *typeValue = dictionary[<span class="string">@"type"</span>];</span><br><span class="line">    XXGalleryItemType type = typeValue.integerValue;</span><br><span class="line">    <span class="keyword">switch</span> (type) &#123;</span><br><span class="line">        <span class="keyword">case</span> XXGalleryItemType1:</span><br><span class="line">            <span class="keyword">return</span> [XXGalleryType1Item class];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> XXGalleryItemType2:</span><br><span class="line">            <span class="keyword">return</span> [XXGalleryType2Item class];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> XXGalleryItemType3:</span><br><span class="line">            <span class="keyword">return</span> [XXGalleryType3Item class];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> XXGalleryItemType4:</span><br><span class="line">            <span class="keyword">return</span> [XXGalleryType4Item class];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> XXGalleryItemType5:</span><br><span class="line">            <span class="keyword">return</span> [XXGalleryType5Item class];</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)pushWithNavigationController:(<span class="built_in">UINavigationController</span> * _Nonnull)navigationController</span><br><span class="line">&#123;</span><br><span class="line">    DLog(<span class="string">@"wrong gallery item"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXGalleryType1Item</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)pushWithNavigationController:(<span class="built_in">UINavigationController</span> * _Nonnull)navigationController</span><br><span class="line">&#123;</span><br><span class="line">    ViewController1 *vc = ...;</span><br><span class="line">    [navigationController pushViewController:vc animated:<span class="literal">YES</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXGalleryType2Item</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)pushWithNavigationController:(<span class="built_in">UINavigationController</span> * _Nonnull)navigationController</span><br><span class="line">&#123;</span><br><span class="line">    ViewController2 *vc = ...;</span><br><span class="line">    [navigationController pushViewController:vc animated:<span class="literal">YES</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXGalleryType3Item</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)pushWithNavigationController:(<span class="built_in">UINavigationController</span> * _Nonnull)navigationController</span><br><span class="line">&#123;</span><br><span class="line">    ViewController3 *vc = ...;</span><br><span class="line">    [navigationController pushViewController:vc animated:<span class="literal">YES</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXGalleryType4Item</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)pushWithNavigationController:(<span class="built_in">UINavigationController</span> * _Nonnull)navigationController</span><br><span class="line">&#123;</span><br><span class="line">    ViewController4 *vc = ...;</span><br><span class="line">    [navigationController pushViewController:vc animated:<span class="literal">YES</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"><span class="comment">////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXGalleryType5Item</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)pushWithNavigationController:(<span class="built_in">UINavigationController</span> * _Nonnull)navigationController</span><br><span class="line">&#123;</span><br><span class="line">    ViewController5 *vc = ...;</span><br><span class="line">    [navigationController pushViewController:vc animated:<span class="literal">YES</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>在 <code>XXGalleryItem</code> 的内部根据 type 创建相应的内部私有类，在内部私有类中各自去实现自己的跳转逻辑，而在处理跳转逻辑的地方只需要获取 item，然后发送一条处理跳转的消息即可：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">XXGalleryItem *item = ...;</span><br><span class="line"><span class="keyword">if</span> (![item isKindOfClass:[LHGalleryItem class]]) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line">[item pushWithNavigationController:<span class="keyword">self</span>.navigationController];</span><br></pre></td></tr></table></figure>
+<p>这里，只需要对不同的实例调用开放的超类 XXGalleryItem 的 <code>pushWithNavigationController:</code> 方法即可处理用户点击跳转，而不需要关心具体的跳转细节。当需要扩展或修改跳转逻辑时只需要添加或修改 type 对应的私有子类的实现就可以了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以前在看<a href="https://book.douban.com/subject/25829244/" target="_blank" rel="external">《effective objective-c 2.0：编写高质量ios与os x代码的52个有效方法》</a>中关于类簇的章节是并没有领会类簇的好处，经过这一次亲手实践，感触还是挺大的。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/04/13/the-art-of-code-review-note/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">objc《代码审查的艺术：Dropbox 的故事》笔记</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="cluster-practice-in-objc" data-title="Objective-C 中的一次类簇模式的简单应用实践" data-url="http://dongdonggaui.github.io/2016/04/21/cluster-practice-in-objc/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"huangluyang"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Lukeqqi
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

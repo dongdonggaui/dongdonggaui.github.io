@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>iOS 中“设置类”页面的一次重构实践 | Lukeqqi 的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在日常的 iOS 应用开发中，我们经常遇到“设置类”页面的开发，在这样的页面中提供一些基本的功能选项，如“微信”的“我”中就有：头像及账号信息、相册、收藏、钱包、优惠券等。我们通常的办法，是用一个 UITableView 来实现，通过自定义各种 cell 来实现产品想要的效果。但是如果组织的不好，就会造成代码异常臃肿，UITableViewDataSource 和 UITableViewDeleg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 中“设置类”页面的一次重构实践">
+<meta property="og:url" content="http://dongdonggaui.github.io/2016/04/12/setting-tableview-restructure/index.html">
+<meta property="og:site_name" content="Lukeqqi 的博客">
+<meta property="og:description" content="在日常的 iOS 应用开发中，我们经常遇到“设置类”页面的开发，在这样的页面中提供一些基本的功能选项，如“微信”的“我”中就有：头像及账号信息、相册、收藏、钱包、优惠券等。我们通常的办法，是用一个 UITableView 来实现，通过自定义各种 cell 来实现产品想要的效果。但是如果组织的不好，就会造成代码异常臃肿，UITableViewDataSource 和 UITableViewDeleg">
+<meta property="og:updated_time" content="2016-04-13T03:39:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS 中“设置类”页面的一次重构实践">
+<meta name="twitter:description" content="在日常的 iOS 应用开发中，我们经常遇到“设置类”页面的开发，在这样的页面中提供一些基本的功能选项，如“微信”的“我”中就有：头像及账号信息、相册、收藏、钱包、优惠券等。我们通常的办法，是用一个 UITableView 来实现，通过自定义各种 cell 来实现产品想要的效果。但是如果组织的不好，就会造成代码异常臃肿，UITableViewDataSource 和 UITableViewDeleg">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/assets/blogImg/avatar.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Lukeqqi</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">记录学习的点点滴滴</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/dongdonggaui" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/dongdongguai007" title="weibo">weibo</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/Objective-C/" style="font-size: 13.33px;">Objective-C</a> <a href="/tags/UITableView/" style="font-size: 10px;">UITableView</a> <a href="/tags/brew-cask/" style="font-size: 10px;">brew cask</a> <a href="/tags/code-review/" style="font-size: 10px;">code review</a> <a href="/tags/gem/" style="font-size: 10px;">gem</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/instruments/" style="font-size: 10px;">instruments</a> <a href="/tags/loopback/" style="font-size: 10px;">loopback</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/ruby/" style="font-size: 10px;">ruby</a> <a href="/tags/动画/" style="font-size: 10px;">动画</a> <a href="/tags/实践/" style="font-size: 10px;">实践</a> <a href="/tags/异常/" style="font-size: 10px;">异常</a> <a href="/tags/总结/" style="font-size: 13.33px;">总结</a> <a href="/tags/笔记/" style="font-size: 16.67px;">笔记</a> <a href="/tags/类簇/" style="font-size: 10px;">类簇</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/重构/" style="font-size: 10px;">重构</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+				
+				<section class="switch-part switch-part3">
+				
+					<div id="js-aboutme">武汉大学软件工程 12 级硕士研究生，就职于完美世界（北京），从事 iOS 开发。热爱钻研移动互联网技术。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Lukeqqi</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/assets/blogImg/avatar.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Lukeqqi</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">记录学习的点点滴滴</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/dongdonggaui" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/dongdongguai007" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-setting-tableview-restructure" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/12/setting-tableview-restructure/" class="article-date">
+  	<time datetime="2016-04-12T02:45:57.000Z" itemprop="datePublished">2016-04-12</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS 中“设置类”页面的一次重构实践
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UITableView/">UITableView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/重构/">重构</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在日常的 iOS 应用开发中，我们经常遇到“设置类”页面的开发，在这样的页面中提供一些基本的功能选项，如“微信”的“我”中就有：头像及账号信息、相册、收藏、钱包、优惠券等。我们通常的办法，是用一个 UITableView 来实现，通过自定义各种 cell 来实现产品想要的效果。但是如果组织的不好，就会造成代码异常臃肿，<code>UITableViewDataSource</code> 和 <code>UITableViewDelegate</code> 的各个方法中充斥了大量的 <code>if-else</code>，使代码极难维护。每次需要修改时都要在各个对应的 <code>if-else</code> 中进行相关的修改，稍有不慎就会出现各种逻辑错误。这样在面对产品需求要更改时就会极其被动，牵一发而动全身。</p>
+<a id="more"></a>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>最近接到一个需求，要对项目中的个人中心进行调整，调整的内容并不多，主要涉及以下 3 种方式：</p>
+<ul>
+<li>调整部分 item 的顺序</li>
+<li>增加了几个 item</li>
+<li>将部分 item 整合进了现有的 item 中</li>
+</ul>
+<p>对着需求看了一下现有代码，瞬间整个人都不好了，现有的 <code>tableView:cellForRowAtIndexPath:</code> 里的逻辑大概是这样的：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (indexPath.section == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(login) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (([<span class="keyword">self</span> isShowSpecailView]) &amp;&amp; (indexPath.section == <span class="number">1</span>)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (indexPath.row == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(login) &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (indexPath.row == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(login) &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (indexPath.section == ([<span class="keyword">self</span> isShowSpecailView] ? <span class="number">2</span> : <span class="number">1</span>)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (guestLogin) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (indexPath.row == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (login) &#123;</span><br><span class="line">            <span class="keyword">if</span> (hasMail) &#123;</span><br><span class="line">                ...</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                ...</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (indexPath.row == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(login) &#123;</span><br><span class="line">            <span class="keyword">if</span> (hasPhone) &#123;</span><br><span class="line">                ...</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                ...</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (member) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (indexPath.section == ([<span class="keyword">self</span> isShowSpecailView] ? <span class="number">3</span> : <span class="number">2</span>)) &#123;</span><br><span class="line">    <span class="keyword">if</span>(indexPath.row == <span class="number">0</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (indexPath.section == ([<span class="keyword">self</span> isShowSpecailView] ? <span class="number">4</span> : <span class="number">3</span>)) &#123;</span><br><span class="line">    <span class="keyword">if</span>(indexPath.row == <span class="number">0</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (indexPath.section == ([<span class="keyword">self</span> isShowSpecailView] ? <span class="number">5</span> : <span class="number">4</span>)) &#123;</span><br><span class="line">    <span class="keyword">if</span>(indexPath.row == <span class="number">0</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(indexPath.row == <span class="number">1</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(indexPath.row == <span class="number">2</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (indexPath.section == ([<span class="keyword">self</span> isShowSpecailView] ? <span class="number">6</span> : <span class="number">5</span>)) &#123;</span><br><span class="line">    <span class="keyword">if</span>(indexPath.row == <span class="number">0</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (indexPath.section == ([<span class="keyword">self</span> isShowSpecailView] ? <span class="number">7</span> : <span class="number">6</span>)) &#123;</span><br><span class="line">    <span class="keyword">if</span>(indexPath.row == <span class="number">0</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (indexPath.section == ([<span class="keyword">self</span> isShowSpecailView] ? <span class="number">8</span> : <span class="number">7</span>)) &#123;</span><br><span class="line">    <span class="keyword">if</span>(indexPath.row == <span class="number">0</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看到如此宏达的 <code>if-else</code> 我已经吓尿了，这是规模最大的一个 <code>if-else</code>，总共 150 行，在 <code>tableView:didSelectRowAtIndexPath:</code> 中还有一个相同规模的 <code>if-else</code>，另外还有大大小小的 <code>if-else</code> 遍布 UITableView 的 dataSource 和 delegate 的其他方法中。如果要对这个 tableView 里的数据进行调整，需要针对 UITableView 的 dataSource 和 delegate 里所有的方法找到指定的 <code>if-else</code> 分支进行修改，若 tableView 的结构改变了，还需要调整绝大多数的 <code>if-else</code> 条件，想到这里，我放弃了。我决定放弃项目里的老代码，对这个逻辑进行重写，提高代码应对这种需求变更的能力。</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>在解决问题之前，结合前面遇到的问题，先分析一下可能遇到的需求变化：</p>
+<ul>
+<li>在 tableView 中增加一行或多行，可能是现有的 cell，也可能是一个新的 cell</li>
+<li>更改 tableView 中 cell 的顺序</li>
+<li>废弃 tableView 中现有的某个或某些 cell</li>
+<li>改变 tableVIew 中现有的 cell</li>
+</ul>
+<p>针对以上需求，需要设计一个机制来应对，可以只在一处进行以上更改，而无需处处 <code>if-else</code>。</p>
+<p>首先解决万恶的 <code>if-else</code>。其实每一个 cell 在对其进行配置时，它的表现（显示样式）及行为（点击跳转）已经确定了，对应到 UITableView 的 dataSource，我们可以将 cell 需要的信息（包括如何显示、点击如何跳转等）都封装起来，在 dataSource 和 delegate 里直接取出这个封装进行相关处理而无需繁琐的 <code>if-else</code>。</p>
+<p>前面提到的各种需求变化，其实都是对这种封装的增删改查。而将 cell 的配置逻辑一并封装则可以应对添加一种新的 cell 的挑战。</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>基于以上分析，需要对 cell 用到的信息进行封装，为方便扩展，可以将一些规则封装成协议，供需要的对象去实现以提供足够的信息来对 cell 进行配置。</p>
+<h3 id="LKQSettingTableItem"><a href="#LKQSettingTableItem" class="headerlink" title="LKQSettingTableItem"></a>LKQSettingTableItem</h3><p>以下是协议结构：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> *  所有“设置类” table 的 item 需要遵守的协议</span><br><span class="line"> */</span></span><br><span class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">LKQSettingTableItem</span> &lt;<span class="title">NSObject</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  cell 的重用标识符，用于在 `tableView:cellForRowAtIndexPath:` 中 dequeue 获取 cell</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>, <span class="keyword">readonly</span>) <span class="built_in">NSString</span> *cellReuseIdentifier;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  cell 的高度，用于在 `tableView:heightForCellAtIndexPath:` 中获取 cell 的高度</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>, <span class="keyword">readonly</span>) <span class="built_in">CGFloat</span> cellHeight;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  配置 cell 的逻辑，实现此方法之后可以在 `tableView:cellForRowAtIndexPath:` 中直接调用而让 </span><br><span class="line"> *  view controller 不需要知道 cell 的逻辑</span><br><span class="line"> *</span><br><span class="line"> *  @param cell 需要配置的 cell</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)configCell:(__kindof <span class="built_in">UITableViewCell</span> *)cell;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  类方法获取 cell 的重用标识符，用于注册 cell 给 tableView</span><br><span class="line"> *</span><br><span class="line"> *  @return cell 重用标识符</span><br><span class="line"> */</span></span><br><span class="line">+ (<span class="built_in">NSString</span> *)cellIdentifier;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  类方法获取与此 item 对应的 cell 的类型，用于注册 cell 给 tableView</span><br><span class="line"> *</span><br><span class="line"> *  @return cell 的类</span><br><span class="line"> */</span></span><br><span class="line">+ (Class)cellClass;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@optional</span></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  点击回调，用于在 `tableView:didSelectRowAtIndexPath:` 中调用以处理点击事件</span><br><span class="line"> *</span><br><span class="line"> *  @param tableView cell 所在的 tableView</span><br><span class="line"> *  @param indexPath 指定的 indexPath</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)didSelectedCellInTableView:(<span class="built_in">UITableView</span> *)tableView atIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>首先，信息提供者需要实现 <code>-cellReuseIdentifier</code> 来提供 cell 的重用标识符，这样之后在 <code>tableView:cellForRowAtIndexPath:</code> 里通过 dequeue 来获取 cell 时就不需要使用硬编码或其他繁琐的方式。为避免在返回 <code>tableView:heightForRowAtIndexPath:</code> 里不必要的 <code>if-else</code>，提供者还需要实现 <code>-cellHeight</code> 来提供 cell 的算高逻辑。</p>
+<p>同时，信息提供者还需要实现 <code>+cellIdentifier</code> 和 <code>+cellClass</code> 来提供 cell 的重用标识符和类型信息，方便在调用 <code>registerCall:forCellReuseIdentifier:</code> 时将 cell 注册给 tableView。</p>
+<p>然后，通过实现 <code>-configCell:</code> 来设置 cell 的配置逻辑，这样之后再 <code>tableView:cellForRowAtIndexPath:</code> 中通过 dequeue 获取到 cell 之后，就可以直接调用 <code>configCell</code> 来对 cell 进行配置，而不需要耦合 cell 的其他信息。</p>
+<p>最后，如果需要处理 cell 的点击逻辑，则需要实现 <code>didSelectedCellInTableView:atIndexPath:</code>，之后在 <code>tableView:didSelectedRowAtIndexPath:</code> 中直接调用即可，无需耦合 cell 的其他信息。</p>
+<h3 id="LKQSettingTableManager"><a href="#LKQSettingTableManager" class="headerlink" title="LKQSettingTableManager"></a>LKQSettingTableManager</h3><p>定义好封装规则之后，下一步就是来支持对这种封装的增删改查了。如下定义了 <code>LKQSettingTableManager</code> 来进行管理：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NS_ASSUME_NONNULL_BEGIN</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  设置类 table 管理器，用于管理“设置”、“个人中心”等 table 的数据源，可以让代码组织更整洁，避免过多的</span><br><span class="line"> *  if-else，逻辑更清楚</span><br><span class="line"> */</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">LKQSettingTableManager</span> : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  当前 items 的 section 总数</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>, <span class="keyword">readonly</span>) <span class="built_in">NSInteger</span> sectionCount;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  清空 items</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)clearAllItems;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  将 item 添加到指定 section 的最后，若指定的 section 大于当前 sectionCount 则会创建 </span><br><span class="line"> *  section - sectionCount + 1 个空的 section 用来占位</span><br><span class="line"> *</span><br><span class="line"> *  @param item    要添加的 item</span><br><span class="line"> *  @param section 要添加到的 section</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)addItem:(<span class="keyword">id</span>&lt;LKQSettingTableItem&gt;)item inSection:(<span class="built_in">NSInteger</span>)section;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  在最后一个 section 中添加 item，若当前 items 为空，则会创建一个 section</span><br><span class="line"> *</span><br><span class="line"> *  @param item 要添加的 item</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)addItemInTheLastSection:(<span class="keyword">id</span>&lt;LKQSettingTableItem&gt;)item;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  将一个 item 添加到一个新的 section 中</span><br><span class="line"> *</span><br><span class="line"> *  @param item 要添加的 item</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)addItemInNewSection:(<span class="keyword">id</span>&lt;LKQSettingTableItem&gt;)item;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  删除指定位置的 item</span><br><span class="line"> *</span><br><span class="line"> *  @param indexPath 要删除的 item 的 indexPath</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="keyword">void</span>)removeItemAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  获取指定 section 中 item 数量</span><br><span class="line"> *</span><br><span class="line"> *  @param section 要获取 item 数量的 section</span><br><span class="line"> *</span><br><span class="line"> *  @return item 数量</span><br><span class="line"> */</span></span><br><span class="line">- (<span class="built_in">NSInteger</span>)numberOfItemsInSection:(<span class="built_in">NSInteger</span>)section;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> *  获取指定 indexPath 的 item</span><br><span class="line"> *</span><br><span class="line"> *  @param indexPath 要获取 item 的 indexPath</span><br><span class="line"> *</span><br><span class="line"> *  @return item</span><br><span class="line"> */</span></span><br><span class="line">- (_Nullable <span class="keyword">id</span>&lt;LKQSettingTableItem&gt;)itemAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">NS_ASSUME_NONNULL_END</span></span><br></pre></td></tr></table></figure>
+<h2 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h2><p>定义好规则和管理器之后，将它们应用到实际项目中看看效果。</p>
+<h3 id="构建数据源"><a href="#构建数据源" class="headerlink" title="构建数据源"></a>构建数据源</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)p_resetSettingTableItems</span><br><span class="line">&#123;</span><br><span class="line">    [_settingTableManager clearAllItems];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 按需添加 item，此处逻辑可能存在 if-else</span></span><br><span class="line">    <span class="comment">// 添加 item 到 section0</span></span><br><span class="line">    LHSimpleSettingItem *item00 = ...;</span><br><span class="line">    LHSimpleSettingItem *item01 = ...;</span><br><span class="line">    [_settingTableManager addItemInNewSection:item00];</span><br><span class="line">    [_settingTableManager addItemInTheLastSection:item01];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 添加 item 到 section1</span></span><br><span class="line">    LHSimpleSettingItem *item10 = ...;</span><br><span class="line">    LHSimpleSettingItem *item11 = ...;</span><br><span class="line">    LHSimpleSettingItem *item12 = ...;</span><br><span class="line">    [_settingTableManager addItemInNewSection:item10];</span><br><span class="line">    [_settingTableManager addItemInTheLastSection:item11];</span><br><span class="line">    [_settingTableManager addItemInTheLastSection:item12];</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在配置 items 的地方按照产品需求进行添加指定的 item，按照以前的需求，这里如果要增加类似于登录状态等状态机还是会需要 <code>if-else</code>，但规模已经大大减小。如果以后需求改变了，只需要在这里更改 item 的添加顺序或者添加自定义的新的 item 即可。而当页面数据刷新时，只需要调用一次 <code>p_resetSettingTableItems</code> 即可重建数据。</p>
+<h3 id="UITableViewDataSource"><a href="#UITableViewDataSource" class="headerlink" title="UITableViewDataSource"></a>UITableViewDataSource</h3><p>在 UITableViewDataSource 各方法中长这样：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma mark - TableViewDataSource</span></span><br><span class="line">- (<span class="built_in">NSInteger</span>)numberOfSectionsInTableView:(<span class="built_in">UITableView</span> *)tableView</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> _settingTableManager.sectionCount;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSInteger</span>)tableView:(<span class="built_in">UITableView</span> *)tableView numberOfRowsInSection:(<span class="built_in">NSInteger</span>)section</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> [_settingTableManager numberOfItemsInSection:section];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span>&lt;LKQSettingTableItem&gt; item = [_settingTableManager itemAtIndexPath:indexPath];</span><br><span class="line">    <span class="built_in">UITableViewCell</span> *cell = [tableView dequeueReusableCellWithIdentifier:item.cellReuseIdentifier forIndexPath:indexPath];</span><br><span class="line">    [item configCell:cell];</span><br><span class="line">    <span class="keyword">return</span> cell;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="UITableViewDelegate"><a href="#UITableViewDelegate" class="headerlink" title="UITableViewDelegate"></a>UITableViewDelegate</h3><p>在 UITableViewDelegate 各方法中长这样：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma mark - TableViewDelegate</span></span><br><span class="line">- (<span class="built_in">CGFloat</span>)tableView:(<span class="built_in">UITableView</span> *)tableView heightForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span>&lt;LKQSettingTableItem&gt; item = [_settingTableManager itemAtIndexPath:indexPath];</span><br><span class="line">    <span class="keyword">return</span> item.cellHeight;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)tableView:(<span class="built_in">UITableView</span> *)tableView didSelectRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span>&lt;LKQSettingTableItem&gt; item = [_settingTableManager itemAtIndexPath:indexPath];</span><br><span class="line">    [item didSelectedCellInTableView:tableView atIndexPath:indexPath];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从上可见，代码整洁了不少，看不到吓人的 <code>if-else</code> 了，在有需求变更时 UITableViewDataSource 和 UITableViewDelegate 各方法里的代码都不需要修改，只需修改配置 <code>_settingTableManager</code> 的逻辑就可以了。如果需要加入一种新的 cell，只需要新写一个 item 实现 LKQSettingTableItem 协议，然后在 item 内部去配置 cell 即可。代码就是这么的奇妙，能给我们带来麻烦也可以帮我们解决麻烦。<a href="">LKQSettingTableManager</a> 已经整理开源了。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/04/13/the-art-of-code-review-note/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          objc《代码审查的艺术：Dropbox 的故事》笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/04/08/an-interaction-with-instruments/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">一次 instruments 实践</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="setting-tableview-restructure" data-title="iOS 中“设置类”页面的一次重构实践" data-url="http://dongdonggaui.github.io/2016/04/12/setting-tableview-restructure/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"huangluyang"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Lukeqqi
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

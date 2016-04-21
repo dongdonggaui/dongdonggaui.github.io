@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>iOS 网络连接测试 | Lukeqqi 的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="工作中接到一个需求：公司运维同事反应很多手游用户经常反应游戏服务器连接不上，而客服在处理这种用户反馈时又得不到充分的信息来判断是什么问题，所以希望在老虎游戏 App 中增加一个自动化的网络测试功能，希望让连不上服务器的同事简单的输入游戏、服务器等信息之后通过一系列的测试最后生成一个详细的检测报告，以方便用户在联系客服时能够提供更多信息来进行问题排除。
+初步分析，此功能中涉及到网络的功能点主要有：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 网络连接测试">
+<meta property="og:url" content="http://dongdonggaui.github.io/2016/03/24/iOS-network-test/index.html">
+<meta property="og:site_name" content="Lukeqqi 的博客">
+<meta property="og:description" content="工作中接到一个需求：公司运维同事反应很多手游用户经常反应游戏服务器连接不上，而客服在处理这种用户反馈时又得不到充分的信息来判断是什么问题，所以希望在老虎游戏 App 中增加一个自动化的网络测试功能，希望让连不上服务器的同事简单的输入游戏、服务器等信息之后通过一系列的测试最后生成一个详细的检测报告，以方便用户在联系客服时能够提供更多信息来进行问题排除。
+初步分析，此功能中涉及到网络的功能点主要有：">
+<meta property="og:updated_time" content="2016-04-21T11:48:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS 网络连接测试">
+<meta name="twitter:description" content="工作中接到一个需求：公司运维同事反应很多手游用户经常反应游戏服务器连接不上，而客服在处理这种用户反馈时又得不到充分的信息来判断是什么问题，所以希望在老虎游戏 App 中增加一个自动化的网络测试功能，希望让连不上服务器的同事简单的输入游戏、服务器等信息之后通过一系列的测试最后生成一个详细的检测报告，以方便用户在联系客服时能够提供更多信息来进行问题排除。
+初步分析，此功能中涉及到网络的功能点主要有：">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/assets/blogImg/avatar.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Lukeqqi</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">记录学习的点点滴滴</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/dongdonggaui" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/dongdongguai007" title="weibo">weibo</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/Mac/" style="font-size: 10px;">Mac</a> <a href="/tags/Objective-C/" style="font-size: 13.33px;">Objective-C</a> <a href="/tags/UITableView/" style="font-size: 10px;">UITableView</a> <a href="/tags/brew-cask/" style="font-size: 10px;">brew cask</a> <a href="/tags/code-review/" style="font-size: 10px;">code review</a> <a href="/tags/gem/" style="font-size: 10px;">gem</a> <a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/instruments/" style="font-size: 10px;">instruments</a> <a href="/tags/loopback/" style="font-size: 10px;">loopback</a> <a href="/tags/objc/" style="font-size: 10px;">objc</a> <a href="/tags/ruby/" style="font-size: 10px;">ruby</a> <a href="/tags/动画/" style="font-size: 10px;">动画</a> <a href="/tags/实践/" style="font-size: 10px;">实践</a> <a href="/tags/异常/" style="font-size: 10px;">异常</a> <a href="/tags/总结/" style="font-size: 13.33px;">总结</a> <a href="/tags/笔记/" style="font-size: 16.67px;">笔记</a> <a href="/tags/类簇/" style="font-size: 10px;">类簇</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/重构/" style="font-size: 10px;">重构</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+				
+				<section class="switch-part switch-part3">
+				
+					<div id="js-aboutme">武汉大学软件工程 12 级硕士研究生，就职于完美世界（北京），从事 iOS 开发。热爱钻研移动互联网技术。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Lukeqqi</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/assets/blogImg/avatar.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Lukeqqi</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">记录学习的点点滴滴</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/dongdonggaui" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/dongdongguai007" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-iOS-network-test" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/24/iOS-network-test/" class="article-date">
+  	<time datetime="2016-03-24T08:44:20.000Z" itemprop="datePublished">2016-03-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS 网络连接测试
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/网络/">网络</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>工作中接到一个需求：公司运维同事反应很多手游用户经常反应游戏服务器连接不上，而客服在处理这种用户反馈时又得不到充分的信息来判断是什么问题，所以希望在老虎游戏 App 中增加一个自动化的网络测试功能，希望让连不上服务器的同事简单的输入游戏、服务器等信息之后通过一系列的测试最后生成一个详细的检测报告，以方便用户在联系客服时能够提供更多信息来进行问题排除。</p>
+<p>初步分析，此功能中涉及到网络的功能点主要有：</p>
+<ul>
+<li>DNS解析</li>
+<li>ping</li>
+<li>traceroute</li>
+<li>telnet</li>
+</ul>
+<p>确定了以上功能点之后，发现在 iOS 平台的实现样样都超出自己已有的知识体系范围，这时候就需要求助苹果，看苹果有没有相关的解决方案了。</p>
+<a id="more"></a>
+<h2 id="调研"><a href="#调研" class="headerlink" title="调研"></a>调研</h2><p>在苹果开发者平台找到一篇文档《<a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Introduction/Introduction.html#//apple_ref/doc/uid/TP40010220" target="_blank" rel="external">Networking Overview</a>》，介绍了 iOS 平台所有的网络相关的技术栈，有一段专门介绍了针对某种需求可以用到的<a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/ChoosingTheRightNetworkingAPI/ChoosingTheRightNetworkingAPI.html#//apple_ref/doc/uid/TP40010220-CH7-SW6" target="_blank" rel="external">相关技术</a>，粗略翻译仅供自己备忘：</p>
+<blockquote>
+<p><strong>P2P 网络游戏</strong>：Game Kit framework 提供了在 iOS 平台对 P2P 通信的支持，包括广域网和局域网（通过 Wi-Fi 或蓝牙）。开发者在应用中可以通过 Game Kit 来实现以下功能：</p>
+<ul>
+<li>为多人游戏提供网络通信</li>
+<li>提供语音通信</li>
+</ul>
+<p>其他没有提及的 P2P 通信需要用到后面将要提到的更底层的 API 来完成，参考<a href="https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/GameKit_Guide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008304" target="_blank" rel="external">Game Center Programming Guide</a>了解更多。</p>
+<p><strong>其他类型 P2P 网络 APP</strong>：Multipeer Connectivity framework 提供了通过 Wi-Fi、蓝牙对 P2P 通信的支持，参考<a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Discovering,Browsing,AndAdvertisingNetworkServices/Discovering,Browsing,AndAdvertisingNetworkServices.html#//apple_ref/doc/uid/TP40010220-CH9-SW1" target="_blank" rel="external">Discovering and Advertising Network Services</a>了解更多。</p>
+<p><strong>连接 web 服务</strong>：在 iOS 平台，发送和接收少量的信息首选的方式是通过 HTTP 或 HTTPS 这些标准协议来完成。通过这些已有的协议，开发者只需要做很少量的工作就可以在客户端和服务器端支持网络连接。支持安全的连接对 HTTP 来说也相当的简单，开发者只需要在服务器端添加一个证书，然后在 URL 的第一部分加上一个字母就可以了。</p>
+<p>了解更多发送 HTTP 和 HTTPS 请求的相关 API，请参考<a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/WorkingWithHTTPAndHTTPSRequests/WorkingWithHTTPAndHTTPSRequests.html#//apple_ref/doc/uid/TP40010220-CH8-SW1" target="_blank" rel="external">Making HTTP and HTTPS Requests</a>。</p>
+<p>了解如何在应用中显示一个网页，请参考<a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/DisplayingWebContent/DisplayingWebContent.html#//apple_ref/doc/uid/TP40012545-SW1" target="_blank" rel="external">Displaying Web and Multimedia Content</a>。</p>
+<p><strong>连接 FTP 服务器</strong>：FTP 作为古老的协议，由于各种各样的限制和安全问题（数据和密码都是明文），除非是由于历史遗留问题要维护已有的系统否则是不推荐使用的。</p>
+<p>鉴于 NSURLConnection 也可以用于 ftp:// URL，如果只是需要通过 FTP 来下载文件，开发者只需要使用前面提到过的 NSURLConnection API，使用相应的 URL。</p>
+<p>对更复杂的 FTP 连接，可以使用 CFNetwork framework 提供的 CFFTPStream。CFNetwork 还提供了 CFURLAccess 可以用来删除 FTP 服务器上的文件。了解更多请参考 <a href="https://developer.apple.com/library/ios/documentation/Networking/Conceptual/CFNetwork/Introduction/Introduction.html#//apple_ref/doc/uid/TP30001132" target="_blank" rel="external">CFNetwork Programming Guide.</a></p>
+<p><strong>Discover and advertise network services</strong>：OS X and iOS provide support for DNS Service Discovery, which allows you to describe what services your program provides and discover other services on the user’s machine, on nearby machines, or on one of the user’s home machines using Back to My Mac. You can then use that information to communicate with other copies of your program or other programs that your program knows how to talk to. For example, OS X uses DNS Service Discovery to let users find nearby printers, stream music in iTunes from nearby computers, share screens in Finder, and so on.</p>
+<p>To learn how to discover services on your local area network or on remote servers using DNS Service Discovery, read <a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Discovering,Browsing,AndAdvertisingNetworkServices/Discovering,Browsing,AndAdvertisingNetworkServices.html#//apple_ref/doc/uid/TP40010220-CH9-SW1" target="_blank" rel="external">Discovering and Advertising Network Services</a>.</p>
+<p><strong>域名解析</strong>：OS X 和 iOS 提供了 Core Foundation 层和 POSIX 层的 API 来获取域名对应的 IP 地址。通过阅读 <a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/WhyNetworkingIsHard/WhyNetworkingIsHard.html#//apple_ref/doc/uid/TP40010220-CH13-SW1" target="_blank" rel="external">Designing for Real-World Networks</a> 可以更深入的了解这些 API。避免在连接服务器之前先进行域名解析，通常情况下应该直接使用域名访问服务器。具体请参考 <a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/CommonPitfalls/CommonPitfalls.html#//apple_ref/doc/uid/TP40010220-CH4-SW1" target="_blank" rel="external">Avoiding Common Networking Mistakes</a> 中的 <a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/CommonPitfalls/CommonPitfalls.html#//apple_ref/doc/uid/TP40010220-CH4-SW20" target="_blank" rel="external">Avoid Resolving DNS Names Before Connecting to a Host</a>。</p>
+<p><strong>使用 socket 或 socket streams</strong>：如果 higher-level 的 API 都无法满足网络请求的需求，则可以使用 socket（POSIX 层或 Core Foundation 层均提供）或 socket streams（位于 Core Foundation 层），更多信息请参考 <a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/SocketsAndStreams/SocketsAndStreams.html#//apple_ref/doc/uid/TP40010220-CH203-CJBEFGHG" target="_blank" rel="external">Using Sockets and Socket Streams</a>。</p>
+<p><strong>通信安全</strong>：OS X 和 iOS 同时支持 TLS 和 SSL 进行通信加密和服务器授信，更多信息请参考 <a href="https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/SecureNetworking/SecureNetworking.html#//apple_ref/doc/uid/TP40010220-CH1-SW1" target="_blank" rel="external">Using Networking Securely</a>。</p>
+</blockquote>
+<p>未完待续。。。。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/04/08/an-interaction-with-instruments/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          一次 instruments 实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/03/24/effective-objc-note-1-md/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Effective Objective-C 2.0 刷书笔记（一）</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="iOS-network-test" data-title="iOS 网络连接测试" data-url="http://dongdonggaui.github.io/2016/03/24/iOS-network-test/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"huangluyang"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Lukeqqi
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
